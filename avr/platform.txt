@@ -1,0 +1,20 @@
+# Arduino mightycoreEX Core and platform.
+# ------------------------------
+
+# For more info:
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
+
+name=mightycoreEX
+version=2.0.1
+
+tools.dragon_jtag.path=
+tools.dragon_jtag.cmd=avrdude
+#tools.dragon_jtag.config.path=
+
+tools.dragon_jtag.upload.params.verbose=-v
+tools.dragon_jtag.upload.params.quiet=-q -q
+tools.dragon_jtag.upload.verify=
+tools.dragon_jtag.upload.params.noverify=-V
+
+tools.dragon_jtag.upload.pattern={path}{cmd} {upload.verbose} {upload.verify} -p {build.mcu} -c {upload.protocol} -P {upload.port} "-Uflash:w:{build.path}/{build.project_name}.hex:i"
+
