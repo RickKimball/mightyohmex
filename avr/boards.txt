@@ -34,15 +34,19 @@ menu.uploader=Upload Via
 ## Clock frequencies
 1284ex.menu.clock.0=8 MHz internal (default)
 1284ex.menu.clock.0.build.f_cpu=8000000L
+1284ex.menu.clock.0.upload.jtag_speed=1000kHz
 
 1284ex.menu.clock.1=12 MHz external
 1284ex.menu.clock.1.build.f_cpu=12000000L
+1284ex.menu.clock.1.upload.jtag_speed=2000kHz
 
 1284ex.menu.clock.2=16 MHz external
-1284ex.menu.clock.2.build.f_cpu=20000000L
+1284ex.menu.clock.2.build.f_cpu=16000000L
+1284ex.menu.clock.2.upload.jtag_speed=3000kHz
 
 1284ex.menu.clock.3=20 MHz external
 1284ex.menu.clock.3.build.f_cpu=20000000L
+1284ex.menu.clock.3.upload.jtag_speed=3000kHz
 
 # Compiler link time optimization
 1284ex.menu.lto.0=LTO Disabled (default)
