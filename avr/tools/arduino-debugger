@@ -27,15 +27,11 @@ export BIN_FILE=${BUILD_DIR}/${3}.bin
 export HEX_FILE=${BUILD_DIR}/${3}.hex
 export ELF_FILE=${BUILD_DIR}/${3}.elf
 
-#-----------------------------------------------------------------------
-# if you define OPENOCD_TARGET we use it, if not we default to stm32f1x.cfg
-if [ -z ${OPENOCD_TARGET+x} ]; then
-  export OPENOCD_TARGET=stm32f1x.cfg
-fi
+#exit 0
 
 #----------------------------------------------------------------------------
-# if openocd is hanging around, kill it
-killall openocd >/dev/null 2>&1 
+# if avarice is hanging around, kill it
+killall avarice >/dev/null 2>&1 
 
 set -e # worry about errors and exit from now on
 
@@ -45,13 +41,8 @@ cd "${BUILD_DIR}"
 #----------------------------------------------------------------------------
 # upload to the board using the .bin or .hex file 
 if [ ${ARG_CNT} -eq 3 ]; then
-  if [ -f ${BIN_FILE} ]; then
-    openocd ${DEBUG_FLG} -f interface/stlink.cfg -f target/${OPENOCD_TARGET} \
-            -c "program ${BIN_FILE} verify reset exit 0x08000000"
-  else
-    openocd ${DEBUG_FLG} -f interface/stlink.cfg -f target/${OPENOCD_TARGET} \
-            -c "program ${HEX_FILE} verify reset exit"
-  fi
+    avrdude -v -p atmega1284p -c dragon_jtag -P usb \
+            "-Uflash:w:${HEX_FILE}:i"
 else
   echo "skipping upload will use firmware already on flash" 
 fi
@@ -60,20 +51,19 @@ fi
 # start up openocd server in the background minimized
 xterm -geometry 80x43 -iconic \
        -T 'Arduino GDB Server' \
-       -e openocd -f interface/stlink.cfg -f target/${OPENOCD_TARGET} &
+       -e avarice -g -j usb --jtag-bitrate 2000kHz :4242 &
 
 #----------------------------------------------------------------------------
 # start up the arm-none-eabi-gdb ui and wait for it to exit
 xterm -geometry 100x45 -bg \#ffffe0 -fg \#000000 \
        -T 'Arduino Debugger' \
-       -e arm-none-eabi-gdb \
+       -e avr-gdb \
        -n \
        -ex 'set print repeats 1024' \
        -ex 'set pagination off' \
        -ex 'set confirm off' \
        -ex 'set mem inaccesible-by-default off' \
-       -ex "source ${TOOLS_DIR}/armv7m-vecstate.gdb" \
-       -ex 'target remote :3333' \
+       -ex 'target remote :4242' \
        -ex 'mon reset init' \
        -ex 'tbreak setup' \
        -ex 'layout split' \
@@ -83,6 +73,6 @@ xterm -geometry 100x45 -bg \#ffffe0 -fg \#000000 \
 set +e
 #----------------------------------------------------------------------------
 # if anything went wrong this will kill the openocd gdb server
-killall openocd >/dev/null 2>&1 
+killall avarice >/dev/null 2>&1 
 
 exit 0

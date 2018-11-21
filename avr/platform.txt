@@ -18,3 +18,14 @@ tools.dragon_jtag.upload.params.noverify=-V
 
 tools.dragon_jtag.upload.pattern={path}{cmd} {upload.verbose} {upload.verify} -p {build.mcu} -c {upload.protocol} -P {upload.port} "-Uflash:w:{build.path}/{build.project_name}.hex:i"
 
+tools.dragon_debug.path={runtime.platform.path}/tools/
+tools.dragon_debug.cmd=arduino-debugger
+#tools.dragon_debug.config.path=
+
+tools.dragon_debug.upload.params.verbose=-v
+tools.dragon_debug.upload.params.quiet=-q -q
+tools.dragon_debug.upload.verify=
+tools.dragon_debug.upload.params.noverify=-V
+
+tools.dragon_debug.upload.pattern={path}{cmd} {upload.verbose} "{build.path}" "{build.project_name}"
+

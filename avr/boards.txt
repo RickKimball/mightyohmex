@@ -5,6 +5,7 @@
 # Menu options
 menu.clock=Clock
 menu.lto=Compiler(LTO)
+menu.uploader=Upload Via
 
 ##################################################################
 #### ATmega1284/P                                             ####
@@ -16,11 +17,19 @@ menu.lto=Compiler(LTO)
 1284ex.build.mcu=atmega1284p
 
 ## Upload via avr dragon using jtag
-1284ex.upload.tool=dragon_jtag
-1284ex.upload.protocol=dragon_jtag
-1284ex.upload.port=usb
-1284ex.upload.maximum_size=130048
-1284ex.upload.maximum_data_size=16384
+1284ex.menu.uploader.dragon_jtag=avr-dragon (jtag)
+1284ex.menu.uploader.dragon_jtag.upload.tool=dragon_jtag
+1284ex.menu.uploader.dragon_jtag.upload.protocol=dragon_jtag
+1284ex.menu.uploader.dragon_jtag.upload.port=usb
+1284ex.menu.uploader.dragon_jtag.upload.maximum_size=130048
+1284ex.menu.uploader.dragon_jtag.upload.maximum_data_size=16384
+
+1284ex.menu.uploader.dragon_debug=avr-dragon (jtag w/debug)
+1284ex.menu.uploader.dragon_debug.upload.tool=dragon_debug
+1284ex.menu.uploader.dragon_debug.upload.protocol=dragon_jtag
+1284ex.menu.uploader.dragon_debug.upload.port=usb
+1284ex.menu.uploader.dragon_debug.upload.maximum_size=130048
+1284ex.menu.uploader.dragon_debug.upload.maximum_data_size=16384
 
 ## Clock frequencies
 1284ex.menu.clock.0=8 MHz internal (default)
@@ -47,5 +56,5 @@ menu.lto=Compiler(LTO)
 1284ex.menu.lto.1.compiler.c.elf.extra_flags=-w -flto -g
 1284ex.menu.lto.1.compiler.cpp.extra_flags=-Wextra -flto -g
 1284ex.menu.lto.1.ltoarcmd=avr-gcc-ar
- 
+
 #EOF
