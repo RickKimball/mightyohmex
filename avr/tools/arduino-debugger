@@ -1,16 +1,16 @@
 #!/bin/bash
-# File: arduino-debugger - upload and auto-launch debugger
-# Desc: linux specific uploader and debugger using openocd and arm-none-eabi-gdb
+# File: arduino-debugger - auto-launch debugger
+# Desc: linux specific debugger using avarice and avr-gdb
 #       note: this might work on Mac OS/X (not tested)
 #
 # Author: Rick Kimball
 # 
-set -x
+#set -x
 export ARG_CNT="$#"
 
 if [ ${ARG_CNT} -lt 3 ]; then
   echo "usage: $0 [-d0|-d1] arduino_build_tmp_path sketch [no_upload]"
-  echo " debug flag             - openocd debug flags [-d0 silent|-d1 verbose]"
+  echo " debug flag             - avarice debug flags [-d0 silent|-d1 verbose]"
   echo " arduino_build_tmp_path - the temp /tmp/arduino_build_nnnnn directory"
   echo " sketch                 - the sketch name .. blink.ino"
   echo " [no_upload]            - optionally skip upload, just debug"
@@ -27,52 +27,28 @@ export BIN_FILE=${BUILD_DIR}/${3}.bin
 export HEX_FILE=${BUILD_DIR}/${3}.hex
 export ELF_FILE=${BUILD_DIR}/${3}.elf
 
-#exit 0
-
-#----------------------------------------------------------------------------
-# if avarice is hanging around, kill it
-killall avarice >/dev/null 2>&1 
-
-set -e # worry about errors and exit from now on
-
 #----------------------------------------------------------------------------
 cd "${BUILD_DIR}"
 
 #----------------------------------------------------------------------------
-# upload to the board using the .bin or .hex file 
-if [ ${ARG_CNT} -eq 3 ]; then
-    avrdude -v -p atmega1284p -c dragon_jtag -P usb \
-            "-Uflash:w:${HEX_FILE}:i"
-else
-  echo "skipping upload will use firmware already on flash" 
-fi
-
-#----------------------------------------------------------------------------
-# start up openocd server in the background minimized
-xterm -geometry 80x43 -iconic \
+# start up avarice gdb server in the background
+xterm -geometry 80x43 \
        -T 'Arduino GDB Server' \
-       -e avarice -g -j usb --jtag-bitrate 2000kHz :4242 &
+       -e avarice -g -j usb --jtag-bitrate 2000kHz --reset-srst :4242 &
 
 #----------------------------------------------------------------------------
-# start up the arm-none-eabi-gdb ui and wait for it to exit
+# start up the avr-gdb ui and wait for it to exit
 xterm -geometry 100x45 -bg \#ffffe0 -fg \#000000 \
        -T 'Arduino Debugger' \
        -e avr-gdb \
        -n \
-       -ex 'set print repeats 1024' \
        -ex 'set pagination off' \
        -ex 'set confirm off' \
-       -ex 'set mem inaccesible-by-default off' \
        -ex 'target remote :4242' \
-       -ex 'mon reset init' \
+       -ex 'mon reset' \
        -ex 'tbreak setup' \
        -ex 'layout split' \
        -ex 'continue' \
        "${ELF_FILE}"
-
-set +e
-#----------------------------------------------------------------------------
-# if anything went wrong this will kill the openocd gdb server
-killall avarice >/dev/null 2>&1 
 
 exit 0
