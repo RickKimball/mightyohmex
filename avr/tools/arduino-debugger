@@ -5,7 +5,8 @@
 #
 # Author: Rick Kimball
 # 
-set -x
+
+#set -x
 export ARG_CNT="$#"
 
 if [ ${ARG_CNT} -lt 3 ]; then
@@ -19,6 +20,8 @@ if [ ${ARG_CNT} -lt 3 ]; then
   exit 1
 fi
 
+export GDB_PORT=4242
+
 export TOOLS_DIR=$(dirname $0)
 export DEBUG_FLG=${1}
 export BUILD_DIR=${2}
@@ -27,6 +30,7 @@ export BIN_FILE=${BUILD_DIR}/${3}.bin
 export HEX_FILE=${BUILD_DIR}/${3}.hex
 export ELF_FILE=${BUILD_DIR}/${3}.elf
 export JTAG_SPEED=${4:-3000kHz}
+export LOAD_CMD=${5:-echo noload}
 
 #----------------------------------------------------------------------------
 cd "${BUILD_DIR}"
@@ -35,7 +39,8 @@ cd "${BUILD_DIR}"
 # start up avarice gdb server in the background
 xterm -geometry 80x43 \
        -T 'Arduino GDB Server' \
-       -e avarice -g -j usb --jtag-bitrate ${JTAG_SPEED} --reset-srst :4242 &
+       -e avarice -g -j usb --jtag-bitrate ${JTAG_SPEED} \
+           --reset-srst :${GDB_PORT} &
 
 #----------------------------------------------------------------------------
 # start up the avr-gdb ui and wait for it to exit
@@ -44,8 +49,9 @@ xterm -geometry 100x45 -bg \#ffffe0 -fg \#000000 \
        -e avr-gdb \
        -ex 'set pagination off' \
        -ex 'set confirm off' \
-       -ex 'target remote :4242' \
+       -ex "target remote :${GDB_PORT}" \
        -ex 'mon reset' \
+       -ex "${LOAD_CMD}" \
        -ex 'tbreak setup' \
        -ex 'layout split' \
        -ex 'continue' \

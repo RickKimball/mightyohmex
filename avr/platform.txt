@@ -27,5 +27,5 @@ tools.dragon_debug.upload.params.quiet=-q -q
 tools.dragon_debug.upload.verify=
 tools.dragon_debug.upload.params.noverify=-V
 
-tools.dragon_debug.upload.pattern={path}{cmd} {upload.verbose} "{build.path}" "{build.project_name}" "{upload.jtag_speed}"
+tools.dragon_debug.upload.pattern={path}{cmd} {upload.verbose} "{build.path}" "{build.project_name}" "{upload.jtag_speed}" "{upload.debug_load}"
 
